@@ -1,5 +1,9 @@
 package com.generation.gamoragames.model;
 
+import java.time.LocalDate;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -7,6 +11,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 
 @Entity
@@ -30,6 +36,11 @@ public class Usuario {
 	
 	@Size(max = 5000, message = "O link da foto não pode ser maior que 5000 caracteres")
 	private String foto;
+	
+	@Past
+	@NotNull(message = "O atributo data de nascimento é obrigatório!")
+	@JsonFormat(pattern = "dd-MM-yyyy")
+	private LocalDate dataNascimento;
 
 	public Long getId() {
 		return id;
@@ -69,6 +80,14 @@ public class Usuario {
 
 	public void setFoto(String foto) {
 		this.foto = foto;
+	}
+
+	public LocalDate getDataNascimento() {
+		return dataNascimento;
+	}
+
+	public void setDataNascimento(LocalDate dataNascimento) {
+		this.dataNascimento = dataNascimento;
 	}
 	
 }

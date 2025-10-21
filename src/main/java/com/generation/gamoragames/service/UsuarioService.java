@@ -1,5 +1,7 @@
 package com.generation.gamoragames.service;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,6 +46,10 @@ public class UsuarioService {
 		if (usuarioRepository.findByUsuario(usuario.getUsuario()).isPresent()) {
 			return Optional.empty();
 		} 
+		
+		if (!isMaiorDeIdade(usuario.getDataNascimento())) {
+	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário deve ser maior de idade.");
+	    }
 		
 		usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
 		usuario.setId(null);
@@ -103,5 +109,10 @@ public class UsuarioService {
 	private String gerarToken(String usuario) {
 		return "Bearer " + jwtService.generateToken(usuario);
 	}
+	
+	public boolean isMaiorDeIdade(LocalDate dataNascimento) {
+	    return Period.between(dataNascimento, LocalDate.now()).getYears() >= 18;
+	}
+
 
 }
