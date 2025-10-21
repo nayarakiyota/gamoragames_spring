@@ -68,6 +68,76 @@ O projeto segue a arquitetura **MVC**, composta por:
 
 ---
 
+### 🧍 Usuário
+| Atributo         | Tipo      | Descrição                                    |
+| ---------------- | --------- | -------------------------------------------- |
+| `id`             | Long      | Identificador único (gerado automaticamente) |
+| `nome`           | String    | Nome do usuário                              |
+| `usuario`        | String    | Email do usuário                             |
+| `senha`          | String    | Senha do usuário (criptografada)             |
+| `foto`           | String    | URL da foto do usuário                       |
+| `dataNascimento` | LocalDate | Data de nascimento do usuário                |
+
+------
+
+
+
+## 🔐 Segurança com JWT e Validação de Maioridade
+
+O projeto agora conta com autenticação e autorização via **JWT (JSON Web Token)**, garantindo que apenas usuários autenticados possam acessar endpoints protegidos.
+
+### 🧾 Novos recursos implementados
+
+- **Model `Usuario` atualizada** com o campo `dataNascimento` (`LocalDate`) para controle de idade.
+- **Validação de maioridade**: o backend verifica se o usuário tem pelo menos 18 anos antes de permitir o cadastro.
+- **Formato de data personalizado**: o campo `dataNascimento` aceita o formato `dd-MM-yyyy` nas requisições JSON.
+- **Criptografia de senha** com `BCryptPasswordEncoder`.
+- **Filtro JWT (`JwtAuthFilter`)** para interceptar e validar tokens em cada requisição.
+- **Serviço `JwtService`** responsável por gerar e validar tokens.
+- **Controller de autenticação** com endpoints para login e cadastro:
+  - `POST /auth/cadastrar`
+  - `POST /auth/logar`
+
+### 🔐 Exemplo de cadastro com validação de idade
+
+```json
+{
+  "nome": "Nayara",
+  "usuario": "nayara@email.com",
+  "senha": "123456",
+  "dataNascimento": "15-05-2000"
+}
+```
+
+> Se o usuário for menor de idade, o backend retorna `400 BAD_REQUEST` com a mensagem: `"Usuário deve ser maior de idade."`
+
+### 🔑 Exemplo de login
+
+```json
+{
+  "usuario": "nayara@email.com",
+  "senha": "123456"
+}
+```
+
+> O backend retorna um token JWT que deve ser usado no cabeçalho `Authorization` das requisições protegidas:
+
+Código
+
+```
+Authorization: Bearer <seu_token_aqui>
+```
+
+### 📌 Observações
+
+- O campo `dataNascimento` é obrigatório e deve estar no formato `dd-MM-yyyy`.
+- A senha é armazenada de forma segura usando hash `BCrypt`.
+- O token JWT tem validade e é necessário para acessar endpoints protegidos.
+
+------
+
+
+
 ## 🛠️ Tecnologias Utilizadas
 
 - **Java 17**
@@ -76,6 +146,9 @@ O projeto segue a arquitetura **MVC**, composta por:
 - **MySQL**
 - **Insomnia** (para testes da API)
 - **Maven**
+- **Spring Security**
+- **JWT (JSON Web Token)**
+- **BCrypt (criptografia de senha)**
 
 ---
 
@@ -119,6 +192,10 @@ A aplicação iniciará na porta padrão **8080**:
 ```
 http://localhost:8080
 ```
+
+⚠️ Para testar endpoints protegidos, é necessário obter um token JWT via `/auth/logar` e incluí-lo no cabeçalho `Authorization`.
+
+
 
 ## 🧪 Testando com o Insomnia
 
